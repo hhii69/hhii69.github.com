@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worm-Bucks Counter</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 350px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  #counter {
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4caf50;
+  }
+
+  label {
+    display: block;
+    margin: 15px 0 5px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  input[type="number"], input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  .subtract-btn { background-color: #f44336; color: white; }
+  .add-btn { background-color: #4caf50; color: white; }
+  .reset-btn { background-color: #2196f3; color: white; }
+
+  #errorMessage {
+    color: #f44336;
+    font-weight: bold;
+    margin-top: 10px;
+    min-height: 20px;
+  }
+
+  .label-counter {
+    font-size: 1.2em;
+    color: #777;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Worm-Bucks</h1>
+  <div id="counter">0</div>
+  <div class="label-counter">Your Worm-Bucks</div>
+  <div id="errorMessage"></div>
+
+  <label for="subtractInput">Subtract (1–100)</label>
+  <input type="number" id="subtractInput" placeholder="Enter amount">
+  <button class="subtract-btn" onclick="subtractNumber()">Subtract</button>
+
+  <label for="addInput">Add (Requires Code)</label>
+  <input type="number" id="addInput" placeholder="Enter amount">
+  <input type="text" id="codeInput" placeholder="Enter code">
+  <button class="add-btn" onclick="addNumber()">Add</button>
+
+  <button class="reset-btn" onclick="resetCounter()">Reset to 0</button>
+</div>
+
+<script>
+  const secretCode = "1234"; // Change to your secret code
+  let counter = parseInt(localStorage.getItem('wormBucks')) || 0;
+
+  const counterDisplay = document.getElementById('counter');
+  const errorMessage = document.getElementById('errorMessage');
+
+  function updateCounter() {
+    counterDisplay.textContent = counter;
+    localStorage.setItem('wormBucks', counter);
+  }
+
+  function showError(message) {
+    errorMessage.textContent = message;
+    setTimeout(() => errorMessage.textContent = '', 3000); // Clear after 3s
+  }
+
+  function subtractNumber() {
+    const val = parseInt(document.getElementById('subtractInput').value);
+    if(!isNaN(val) && val >= 1 && val <= 100){
+      counter -= val;
+      if(counter < 0) counter = 0;
+      updateCounter();
+    } else {
+      showError("Invalid amount — could not subtract");
+    }
+  }
+
+  function addNumber() {
+    const val = parseInt(document.getElementById('addInput').value);
+    const code = document.getElementById('codeInput').value;
+
+    if(isNaN(val) || val <= 0){
+      showError("Invalid amount — could not add");
+      return;
+    }
+
+    if(code === secretCode){
+      counter += val;
+      updateCounter();
+    } else {
+      showError("Wrong code!");
+    }
+  }
+
+  function resetCounter() {
+    counter = 0;
+    updateCounter();
+  }
+
+  updateCounter(); // initial display
+</script>
+
+</body>
+</html>
